@@ -9,7 +9,8 @@ import java.util.List;
  */
 public interface MoviesView {
 
-    void showMovies(List<Movie> moviesList);
+    void showPopularMovies(List<Movie> moviesList);
+    void showSearchResults(List<Movie> moviesList);
     void showLoading();
     void showError();
 }

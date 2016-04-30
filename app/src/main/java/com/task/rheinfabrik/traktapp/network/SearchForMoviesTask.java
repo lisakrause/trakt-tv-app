@@ -38,6 +38,7 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<Movie>>
 
     final static String TYPE_PARAM = "type";
     final static String QUERY_PARAM = "query";
+    final static String PAGE_PARAM = "page";
 
     final static String MOVIE_TYPE = "movie";
 
@@ -47,6 +48,7 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<Movie>>
     final static String MOVIE_IMAGE_OVERVIEW = "images";
     final static String MOVIE_IMAGE = "poster";
     final static String MOVIE_IMAGE_SIZE = "medium";
+
 
 
 
@@ -67,7 +69,13 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<Movie>>
             HashMap<String, String> parameters = new HashMap<String, String>();
             parameters.put(TYPE_PARAM, MOVIE_TYPE);
             parameters.put(QUERY_PARAM, this.mSearchQuery);
+            //TODO: Update page
+            parameters.put(PAGE_PARAM, "1");
 
+            if(isCancelled())
+            {
+               return null;
+            }
             String movies = connector.getMoviesFromTrakt(SEARCH_URL, parameters);
 
 
@@ -77,12 +85,21 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<Movie>>
 
             for(int i = 0; i < jsonArray.length(); i++)
             {
+                if(isCancelled())
+                {
+                    return null;
+                }
                 JSONObject metaMovieObject = jsonArray.getJSONObject(i);
 
                 JSONObject movieObject = metaMovieObject.getJSONObject(MOVIE_TYPE);
                 String title = movieObject.getString(MOVIE_TITLE);
                 String yearString = movieObject.getString(MOVIE_YEAR);
-                String overview = movieObject.getString(MOVIE_OVERVIEW);
+
+                String overview = "";
+                if(movieObject.has(MOVIE_OVERVIEW))
+                {
+                    overview = movieObject.getString(MOVIE_OVERVIEW);
+                }
 
                 JSONObject imageOverviewArray = movieObject.getJSONObject(MOVIE_IMAGE_OVERVIEW);
                 JSONObject imageObject = imageOverviewArray.getJSONObject(MOVIE_IMAGE);
@@ -97,13 +114,17 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<Movie>>
                 moviesList.add(movie);
             }
 
+
+
             return moviesList;
 
         } catch (MalformedURLException e) {
             // URL is invalid
+            String message = e.getMessage();
             //TODO
         } catch (SocketTimeoutException e) {
             // data retrieval or connection timed out
+            String message = e.getMessage();
             //TODO
         } catch (IOException e) {
             // could not read response body
@@ -112,6 +133,7 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<Movie>>
             //TODO
         } catch (JSONException e) {
             // response body is no valid JSON string
+            String message = e.getMessage();
             //TODO
         }
 
@@ -122,7 +144,6 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<Movie>>
     @Override
     protected void onPostExecute(List<Movie> movies)
     {
-
         mPresenter.receiveFoundMoviesList(movies);
     }
 

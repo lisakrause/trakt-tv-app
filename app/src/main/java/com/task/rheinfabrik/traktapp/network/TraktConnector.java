@@ -28,6 +28,7 @@ public class TraktConnector
     private final static int CONNECTION_TIMEOUT = 5000;
     private final static int READ_TIMEOUT = 5000;
 
+
     public String getMoviesFromTrakt(String url, HashMap<String, String> parameters) throws IOException
     {
         if(parameters != null)
@@ -79,6 +80,11 @@ public class TraktConnector
         }
 
         return responseBody;
+    }
+
+    public void abortAllRequests()
+    {
+
     }
 
     private static String getBodyString(InputStream inputStream) throws IOException

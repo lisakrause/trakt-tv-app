@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Created by lisa on 29.04.2016.
  */
-public class GetPopularMoviesTask extends AsyncTask<MoviesPresenter, Void, List<Movie>>
+public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<Movie>>
 {
     private MoviesPresenter mPresenter;
 
@@ -37,11 +37,16 @@ public class GetPopularMoviesTask extends AsyncTask<MoviesPresenter, Void, List<
     final static String MOVIE_YEAR = "year";
 
 
-    @Override
-    protected List<Movie> doInBackground(MoviesPresenter... presenter)
-    {
-        this.mPresenter = presenter[0];
 
+    public GetPopularMoviesTask(MoviesPresenter presenter)
+    {
+        mPresenter = presenter;
+    }
+
+
+    @Override
+    protected List<Movie> doInBackground(Void...params)
+    {
 
         try {
             TraktConnector connector = new TraktConnector();

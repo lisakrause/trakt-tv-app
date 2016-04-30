@@ -1,13 +1,10 @@
 package com.task.rheinfabrik.traktapp.presenter;
 
-import android.view.View;
-
 import com.task.rheinfabrik.traktapp.model.Movie;
 import com.task.rheinfabrik.traktapp.network.GetPopularMoviesTask;
 import com.task.rheinfabrik.traktapp.network.SearchForMoviesTask;
 import com.task.rheinfabrik.traktapp.view.MoviesView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +12,9 @@ import java.util.List;
  */
 public class MoviesPresenter implements Presenter<MoviesView>
 {
-   private MoviesView mMoviesView;
+    private MoviesView mMoviesView;
+
+    private SearchForMoviesTask mSearchTask;
 
     @Override
     public void onCreate() {
@@ -48,28 +47,32 @@ public class MoviesPresenter implements Presenter<MoviesView>
     {
         this.mMoviesView.showLoading();
 
-        GetPopularMoviesTask popularTask = new GetPopularMoviesTask();
+        GetPopularMoviesTask popularTask = new GetPopularMoviesTask(this);
 
-        popularTask.execute(this);
+        popularTask.execute();
     }
 
     public void receivePopularMovies(List<Movie> popularMovies)
     {
-        this.mMoviesView.showMovies(popularMovies);
+        this.mMoviesView.showPopularMovies(popularMovies);
     }
 
     public void searchMovies(String searchText)
     {
         this.mMoviesView.showLoading();
 
-        SearchForMoviesTask searchTask = new SearchForMoviesTask(this, searchText);
+        if(this.mSearchTask !=  null)
+        {
+            this.mSearchTask.cancel(true);
+        }
 
-        searchTask.execute();
+        this.mSearchTask = new SearchForMoviesTask(this, searchText);
+
+        this.mSearchTask.execute();
     }
 
     public void receiveFoundMoviesList(List<Movie> foundMovies)
     {
-        //TODO: Zwischen Suche und Populär unterscheiden
-        this.mMoviesView.showMovies(foundMovies);
+        this.mMoviesView.showSearchResults(foundMovies);
     }
 }
