@@ -3,43 +3,32 @@
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
     android:orientation="vertical">
-  
-	<FrameLayout android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center|top">
 
-  <ImageView  
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent" 
+    <ImageView
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
 
-    android:scaleType="center"
-      android:id="@+id/movieImage"
-      android:layout_gravity="top" />
+      android:scaleType="center"
+        android:id="@+id/movieImage"
+        android:layout_gravity="top" />
 
-        <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="20dip"
-          android:layout_gravity="left|bottom"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/titleView"
+        android:layout_gravity="left"
+        android:textColor="@android:color/white"
+        android:textSize="30sp" />
 
-          android:padding="12dip"
-
-            android:id="@+id/movieTitle"
-            android:text="The Dark Knight"
-            android:textStyle="bold"
-            android:textSize="20dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dip"
-            android:layout_gravity="center|bottom"
-            android:padding="12dip"
-            android:id="@+id/yearView"
-            android:text="2008"
-            android:textSize="14dp" />
-
-    </FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/yearView"
+        android:layout_gravity="center_horizontal|left"
+        android:textSize="20sp"
+        android:textColor="@color/primary_material_light" />
 
     <EditText
         android:layout_width="fill_parent"
