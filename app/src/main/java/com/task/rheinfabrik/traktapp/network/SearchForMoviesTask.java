@@ -28,9 +28,11 @@ import java.util.List;
 /**
  * Created by lisa on 29.04.2016.
  */
-public class SearchForMoviesTask extends AsyncTask<MoviesPresenter, Void, List<Movie>>
+public class SearchForMoviesTask extends AsyncTask<Void, Void, List<Movie>>
 {
     private MoviesPresenter mPresenter;
+
+    private String mSearchQuery;
 
     final static String SEARCH_URL = "https://api-v2launch.trakt.tv/search.json";
 
@@ -42,21 +44,29 @@ public class SearchForMoviesTask extends AsyncTask<MoviesPresenter, Void, List<M
     final static String MOVIE_TITLE = "title";
     final static String MOVIE_YEAR = "year";
     final static String MOVIE_OVERVIEW = "overview";
+    final static String MOVIE_IMAGE_OVERVIEW = "images";
+    final static String MOVIE_IMAGE = "poster";
+    final static String MOVIE_IMAGE_SIZE = "medium";
+
+
+
+    public SearchForMoviesTask(MoviesPresenter presenter, String searchQuery)
+    {
+        this.mPresenter = presenter;
+        this.mSearchQuery = searchQuery;
+    }
 
 
     @Override
-    protected List<Movie> doInBackground(MoviesPresenter... presenter)
+    protected List<Movie> doInBackground(Void...params)
     {
-        this.mPresenter = presenter[0];
-
 
         try {
             TraktConnector connector = new TraktConnector();
 
             HashMap<String, String> parameters = new HashMap<String, String>();
             parameters.put(TYPE_PARAM, MOVIE_TYPE);
-            //TODO
-            parameters.put(QUERY_PARAM, "batman");
+            parameters.put(QUERY_PARAM, this.mSearchQuery);
 
             String movies = connector.getMoviesFromTrakt(SEARCH_URL, parameters);
 
@@ -71,11 +81,18 @@ public class SearchForMoviesTask extends AsyncTask<MoviesPresenter, Void, List<M
 
                 JSONObject movieObject = metaMovieObject.getJSONObject(MOVIE_TYPE);
                 String title = movieObject.getString(MOVIE_TITLE);
-                String year = movieObject.getString(MOVIE_YEAR);
+                String yearString = movieObject.getString(MOVIE_YEAR);
                 String overview = movieObject.getString(MOVIE_OVERVIEW);
 
-                Movie movie = new Movie(title, Integer.parseInt(year));
+                JSONObject imageOverviewArray = movieObject.getJSONObject(MOVIE_IMAGE_OVERVIEW);
+                JSONObject imageObject = imageOverviewArray.getJSONObject(MOVIE_IMAGE);
+
+                String imageUrl = imageObject.getString(MOVIE_IMAGE_SIZE);
+
+                Movie movie = new Movie(title);
+                movie.setYear(yearString);
                 movie.setOverview(overview);
+                movie.setImageUrl(imageUrl);
 
                 moviesList.add(movie);
             }

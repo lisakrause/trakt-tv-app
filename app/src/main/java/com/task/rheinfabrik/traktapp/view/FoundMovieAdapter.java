@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.task.rheinfabrik.traktapp.R;
 import com.task.rheinfabrik.traktapp.model.Movie;
 
@@ -29,28 +30,43 @@ public class FoundMovieAdapter extends ArrayAdapter<Movie>
     public View getView(int position, View convertView, ViewGroup parent)
     {
         Movie movie = getItem(position);
-        View listItem = convertView;
 
-        if(listItem == null)
-        {
-            View movieView = LayoutInflater.from(parent.getContext()).
+
+
+            convertView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.found_movie_list_item, parent, false);
-            TextView titleView = (TextView) movieView.findViewById(R.id.movieTitle);
-            TextView yearView = (TextView) movieView.findViewById(R.id.yearView);
-            ImageView imageView = (ImageView) movieView.findViewById(R.id.movieImage);
-            EditText overviewView = (EditText) movieView.findViewById(R.id.overviewText);
+
+            TextView titleView = (TextView) convertView.findViewById(R.id.titleView);
+            TextView yearView = (TextView) convertView.findViewById(R.id.yearView);
+
+            EditText overviewView = (EditText) convertView.findViewById(R.id.overviewText);
 
             titleView.setText(movie.getTitle());
-            yearView.setText(movie.getYear());
+            if(movie.getYear() != 0)
+            {
+                yearView.setText("" + movie.getYear());
+            }else
+            {
+                yearView.setText("unknown year");
+            }
+
             overviewView.setText(movie.getOverview(), TextView.BufferType.EDITABLE);
 
 
-            //TODO: Bild
 
-            return movieView;
-        }else
-        {
-            return convertView;
-        }
+
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.movieImage);
+
+        Picasso
+                .with(parent.getContext())
+                .load(movie.getImageUrl())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.image_error)
+                .into(imageView);
+
+        return convertView;
+
     }
+
+
 }

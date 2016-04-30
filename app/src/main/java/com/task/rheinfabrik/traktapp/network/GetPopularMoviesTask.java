@@ -58,7 +58,8 @@ public class GetPopularMoviesTask extends AsyncTask<MoviesPresenter, Void, List<
                 String title = jsonObject.getString(MOVIE_TITLE);
                 String year = jsonObject.getString(MOVIE_YEAR);
 
-                Movie movie = new Movie(title, Integer.parseInt(year));
+                Movie movie = new Movie(title);
+                movie.setYear(year);
 
                 moviesList.add(movie);
             }

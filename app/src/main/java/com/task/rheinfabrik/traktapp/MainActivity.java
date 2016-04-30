@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 
 import com.task.rheinfabrik.traktapp.model.Movie;
 import com.task.rheinfabrik.traktapp.presenter.MoviesPresenter;
+import com.task.rheinfabrik.traktapp.view.FoundMovieAdapter;
 import com.task.rheinfabrik.traktapp.view.MoviesView;
 import com.task.rheinfabrik.traktapp.view.PopularMovieAdapter;
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements MoviesView{
     private MoviesPresenter mMoviesPresenter;
 
     private PopularMovieAdapter mMoviesAdapter;
+    private FoundMovieAdapter mSearchAdapter;
 
     private EditText mSearchEdit;
     private ListView mMoviesList;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements MoviesView{
         this.mMoviesPresenter.attachView(this);
 
         this.mMoviesAdapter = new PopularMovieAdapter(this, new ArrayList<Movie>());
+        this.mSearchAdapter = new FoundMovieAdapter(this, new ArrayList<Movie>());
 
         this.mSearchEdit = (EditText) findViewById(R.id.searchEdit);
 
@@ -65,12 +68,12 @@ public class MainActivity extends AppCompatActivity implements MoviesView{
         this.mLoadSpinner = (ProgressBar) findViewById(R.id.loadIndicator);
         this.mErrorView = (ImageView) findViewById(R.id.errorView);
 
-        this.mMoviesList.setAdapter(this.mMoviesAdapter);
-
+        //this.mMoviesList.setAdapter(this.mMoviesAdapter);
+        this.mMoviesList.setAdapter(this.mSearchAdapter);
 
 
         //this.mMoviesPresenter.getPopularMovies();
-        this.mMoviesPresenter.searchMovies("");
+        this.mMoviesPresenter.searchMovies("avengers");
 
 
     }
@@ -85,8 +88,11 @@ public class MainActivity extends AppCompatActivity implements MoviesView{
         this.mMoviesList.setVisibility(View.VISIBLE);
 
 
-        this.mMoviesAdapter.clear();
-        this.mMoviesAdapter.addAll(moviesList);
+        //this.mMoviesAdapter.clear();
+        //this.mMoviesAdapter.addAll(moviesList);
+
+        this.mSearchAdapter.clear();
+        this.mSearchAdapter.addAll(moviesList);
 
 
     }

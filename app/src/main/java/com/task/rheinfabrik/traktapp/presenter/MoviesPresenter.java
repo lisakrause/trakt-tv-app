@@ -62,9 +62,9 @@ public class MoviesPresenter implements Presenter<MoviesView>
     {
         this.mMoviesView.showLoading();
 
-        SearchForMoviesTask searchTask = new SearchForMoviesTask();
+        SearchForMoviesTask searchTask = new SearchForMoviesTask(this, searchText);
 
-        searchTask.execute(this);
+        searchTask.execute();
     }
 
     public void receiveFoundMoviesList(List<Movie> foundMovies)

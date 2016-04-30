@@ -9,21 +9,30 @@ public class Movie {
     private String mTitle;
     private String mOverview;
     private String mImageUrl;
+    private boolean mHasImage = false;
 
-    public void setImageUrl(String mImageUrl) {
-        this.mImageUrl = mImageUrl;
+
+    public Movie(String title){
+        mTitle = title;
+    }
+
+    public boolean hasImage()
+    {
+        return this.mHasImage;
+    }
+
+    public void setImageUrl(String imageUrl)
+    {
+        if(imageUrl.compareTo("null") != 0)
+        {
+            this.mImageUrl = imageUrl;
+            this.mHasImage = true;
+        }
     }
 
 
     public String getImageUrl() {
         return mImageUrl;
-    }
-
-
-
-    public Movie(String title, int year){
-        mTitle = title;
-        mYear = year;
     }
 
 
@@ -41,6 +50,19 @@ public class Movie {
 
     public void setYear(int mYear) {
         this.mYear = mYear;
+    }
+
+    public void setYear(String yearString)
+    {
+        try
+        {
+            this.mYear = Integer.parseInt(yearString);
+
+        }catch(NumberFormatException nfe)
+        {
+            this.mYear = 0;
+        }
+
     }
 
     public void setTitle(String mTitle) {
