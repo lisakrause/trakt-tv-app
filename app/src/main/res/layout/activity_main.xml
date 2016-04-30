@@ -8,35 +8,53 @@
 	android:layout_alignParentStart="true"
 	android:background="@color/colorPrimary">
 
-	<EditText
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/searchEdit"
-		android:layout_gravity="center_horizontal"
-		android:editable="true"
-		android:enabled="true"
-		android:inputType="text"
-		android:hint="Search..." />
-
-	<ListView
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:id="@+id/popularMoviesList"
-		android:layout_gravity="right"
-		android:background="@color/colorPrimary"
-		android:visibility="gone" />
-
-	<ProgressBar
+	<SearchView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:id="@+id/loadIndicator"
-		style="@android:style/Widget.Holo.ProgressBar.Small"
-		android:layout_gravity="center|bottom" />
+		android:id="@+id/searchView"
+		android:layout_gravity="right"
+		android:queryHint="Find movies..." />
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Popular Movies"
+		android:id="@+id/statusText"
+		android:layout_gravity="center|left"
+		android:textColor="@android:color/white"
+		android:textSize="20sp" />
 
 	<ImageView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/errorView"
 		android:layout_gravity="center_horizontal" />
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal">
+
+		<ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/searchResultsList"
+            android:background="@color/colorPrimary"
+            android:visibility="gone"
+            android:layout_gravity="center|top" />
+
+		<ListView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:id="@+id/popularMoviesList"
+			android:layout_gravity="center" />
+
+		<ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loadIndicator"
+            style="@android:style/Widget.Holo.ProgressBar.Small"
+            android:layout_gravity="center|bottom" />
+	</FrameLayout>
 
 </LinearLayout>
