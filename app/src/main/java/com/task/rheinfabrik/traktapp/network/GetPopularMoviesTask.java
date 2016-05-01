@@ -14,7 +14,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,18 +33,28 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
     /**
      * The URL that is used to query the trakt.tv database in JSON format.
      */
-    final static String MOVIES_URL = "https://api-v2launch.trakt.tv/movies/popular.json";
+    private final static String MOVIES_URL = "https://api-v2launch.trakt.tv/movies/popular.json";
 
     /**
-     * The movie title, used when parsing the response body.
+     * Used to set the type of id that is looked up when searching for more information on a movie.
      */
-    final static String MOVIE_TITLE = "title";
+    final static String ID_TYPE_PARAM = "id_type";
 
     /**
-     * The production year of the movie, used when parsing the response body.
+     * Used to set the id that is looked up when searching for more information on a movie.
      */
-    final static String MOVIE_YEAR = "year";
+    final static String ID_PARAM = "id";
 
+    /**
+     * Used to set the type of id that is looked up by this search.
+     * This task only searches for trakt IDs.
+     */
+    final static String ID_TYPE = "trakt-movie";
+
+    /**
+     * The name of the JSON object of the movie, used when parsing the response body.
+     */
+    final static String ACTUAL_MOVIE = "movie";
 
     /**
      * Constructs a PopularMoviesTask.
@@ -64,6 +76,7 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
 
             //initialize connection to the database and pass URL
             //that is used to query it
+            HashMap<String, String> parameters = new HashMap<String, String>();
             String movies = TraktConnector.getMoviesFromTrakt(MOVIES_URL, null);
 
 
@@ -81,15 +94,101 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
                 //get concrete movie from the array
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                //parse information...
-                String title = jsonObject.getString(MOVIE_TITLE);
-                String year = jsonObject.getString(MOVIE_YEAR);
+                //init parsing
+                String traktID = "";
+                String title = "";
+                String year = "";
+                String overview = "";
+                String imageURL = "";
 
-                //TODO: get extended info with image and overview
+                if(jsonObject.has(TaskConstants.MOVIE_ID_OVERVIEW))
+                {
+                    JSONObject idsObject = jsonObject.getJSONObject(TaskConstants.MOVIE_ID_OVERVIEW);
+                    if(idsObject.has(TaskConstants.MOVIE_TRAKT_ID))
+                    {
+                         traktID = idsObject.getString(TaskConstants.MOVIE_TRAKT_ID);
+                    }
+                }
 
-                //...into the data model
-                Movie movie = new Movie(title);
+                if(jsonObject.has(TaskConstants.MOVIE_TITLE))
+                {
+                    title = jsonObject.getString(TaskConstants.MOVIE_TITLE);
+                }
+
+                if(jsonObject.has(TaskConstants.MOVIE_YEAR))
+                {
+                    year = jsonObject.getString(TaskConstants.MOVIE_YEAR);
+                }
+
+                //request more information (overview, image) if an ID is given
+                if(!traktID.isEmpty())
+                {
+                    //setup parameters for ID search
+                    HashMap<String, String> searchParameters = new HashMap<String, String>();
+
+                    parameters.put(ID_TYPE_PARAM, ID_TYPE);
+                    parameters.put(ID_PARAM, traktID);
+
+                    //download
+                    String movieInformation =
+                            TraktConnector.getMoviesFromTrakt(TaskConstants.SEARCH_URL, parameters);
+
+
+                    //parsing
+                    JSONArray moviesObject = new JSONArray(movieInformation);
+
+                    //check if there actually has been a movie found for this ID
+                    if(moviesObject.length() == 1)
+                    {
+                        JSONObject movieObject = moviesObject.getJSONObject(0);
+
+                        if(movieObject.has(ACTUAL_MOVIE))
+                        {
+                            JSONObject infoObject = movieObject.getJSONObject(ACTUAL_MOVIE);
+
+                            //get overview
+                            if(infoObject.has(TaskConstants.MOVIE_OVERVIEW))
+                            {
+                                overview = infoObject.getString(TaskConstants.MOVIE_OVERVIEW);
+                            }
+
+                            //traverse through JSON objects...
+                            if(infoObject.has(TaskConstants.MOVIE_IMAGE_OVERVIEW))
+                            {
+                                JSONObject imageOverviewArray =
+                                        infoObject.getJSONObject(TaskConstants.MOVIE_IMAGE_OVERVIEW);
+
+                                if(imageOverviewArray.has(TaskConstants.MOVIE_IMAGE))
+                                {
+                                    JSONObject imageObject =
+                                            imageOverviewArray.getJSONObject(TaskConstants.MOVIE_IMAGE);
+
+                                    if(imageObject.has(TaskConstants.MOVIE_IMAGE_SIZE))
+                                    {
+                                        //...until we find the image URL
+                                        imageURL = imageObject.getString(TaskConstants.MOVIE_IMAGE_SIZE);
+                                    }
+
+
+                                }
+
+                            }
+
+
+                        }
+
+
+                    }
+
+
+                }
+
+
+                //put all information into the data model
+                Movie movie = new Movie(traktID, title);
                 movie.setYear(year);
+                movie.setOverview(overview);
+                movie.setImageUrl(imageURL);
 
                 moviesList.add(movie);
             }

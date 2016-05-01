@@ -15,10 +15,10 @@ import com.task.rheinfabrik.traktapp.model.IMovie;
 
 import java.util.List;
 
-public class FoundMovieAdapter extends ArrayAdapter<IMovie>
+public class MovieListAdapter extends ArrayAdapter<IMovie>
 {
 
-    public FoundMovieAdapter(Context context, List<IMovie> movies)
+    public MovieListAdapter(Context context, List<IMovie> movies)
     {
         super(context, R.layout.found_movie_list_item, movies);
     }

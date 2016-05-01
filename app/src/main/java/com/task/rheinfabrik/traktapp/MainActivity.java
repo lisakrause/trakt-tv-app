@@ -11,9 +11,8 @@ import android.widget.TextView;
 
 import com.task.rheinfabrik.traktapp.model.IMovie;
 import com.task.rheinfabrik.traktapp.presenter.MoviesPresenter;
-import com.task.rheinfabrik.traktapp.view.FoundMovieAdapter;
+import com.task.rheinfabrik.traktapp.view.MovieListAdapter;
 import com.task.rheinfabrik.traktapp.view.IMoviesView;
-import com.task.rheinfabrik.traktapp.view.PopularMovieAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +29,15 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
      */
     private MoviesPresenter mMoviesPresenter;
 
-    private PopularMovieAdapter mMoviesAdapter;
-    private FoundMovieAdapter mSearchAdapter;
+    /**
+     * The adapter that is used to populate the list of the most popular movies.
+     */
+    private MovieListAdapter mPopularAdapter;
+
+    /**
+     * The adapter that is used to populate the list of search results.
+     */
+    private MovieListAdapter mSearchAdapter;
 
     /**
      * The view in which the user can enter a search query.
@@ -83,15 +89,15 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
         this.mMoviesPresenter = new MoviesPresenter();
         this.mMoviesPresenter.attachView(this);
 
-        this.mMoviesAdapter = new PopularMovieAdapter(this, new ArrayList<IMovie>());
-        this.mSearchAdapter = new FoundMovieAdapter(this, new ArrayList<IMovie>());
+        this.mPopularAdapter = new MovieListAdapter(this, new ArrayList<IMovie>());
+        this.mSearchAdapter = new MovieListAdapter(this, new ArrayList<IMovie>());
 
         //---init views
         initViews();
 
         //attach data adapter to list
         this.mSearchResultsList.setAdapter(this.mSearchAdapter);
-        this.mPopularMoviesList.setAdapter(this.mMoviesAdapter);
+        this.mPopularMoviesList.setAdapter(this.mPopularAdapter);
 
         //start to retrieve popular movies
         this.mStatusText.setText(POPULAR_MOVIES);
@@ -167,8 +173,8 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
         this.mSearchResultsList.setVisibility(View.GONE);
         this.mPopularMoviesList.setVisibility(View.VISIBLE);
 
-        this.mMoviesAdapter.clear();
-        this.mMoviesAdapter.addAll(moviesList);
+        this.mPopularAdapter.clear();
+        this.mPopularAdapter.addAll(moviesList);
     }
 
     @Override

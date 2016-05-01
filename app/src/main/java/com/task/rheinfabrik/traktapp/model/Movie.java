@@ -29,6 +29,11 @@ public class Movie implements IMovie{
     private URL mImageUrl;
 
     /**
+     * The trakt ID.
+     */
+    private int mID = -1;
+
+    /**
      * False, if this movie has no poster attached.
      */
     private boolean mHasImage = false;
@@ -38,13 +43,28 @@ public class Movie implements IMovie{
      */
     private boolean mHasYear = false;
 
+    /**
+     * False, if this movie has no ID attached.
+     */
+    private boolean mHasID = false;
+
+
 
     /**
      * Constructs a Movie.
      *
+     * @param id The trakt ID of this movie. The String needs to contain a valid integer.
      * @param title The title of this movie.
      */
-    public Movie(String title){
+    public Movie(String id, String title){
+        try{
+            this.mID = Integer.parseInt(id);
+            this.mHasID = true;
+        }catch(NumberFormatException e)
+        {
+            //Do nothing since everything remains as initialized
+        }
+
         this.mTitle = title;
         this.mYear = -1;
     }
@@ -135,6 +155,16 @@ public class Movie implements IMovie{
         return this.mHasYear;
     }
 
+    @Override
+    public int getID()
+    {
+        return this.mID;
+    }
 
+    @Override
+    public boolean hasID()
+    {
+        return this.mHasID;
+    }
 
 }

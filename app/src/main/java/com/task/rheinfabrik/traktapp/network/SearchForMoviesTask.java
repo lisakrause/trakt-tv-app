@@ -37,67 +37,32 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
     private String mSearchQuery;
 
     /**
-     * The URL that is used to query the trakt.tv database in JSON format.
-     */
-    final static String SEARCH_URL = "https://api-v2launch.trakt.tv/search.json";
-
-    /**
      * The parameter that is used in the URL to set the type that is searched for,
      * e.g. movies in this case.
      */
-    final static String TYPE_PARAM = "type";
+    private final static String TYPE_PARAM = "type";
 
     /**
      * The parameter that is used in the URL to set the search query.
      */
-    final static String QUERY_PARAM = "query";
+    private final static String QUERY_PARAM = "query";
 
     /**
      * The parameter that is used in the URL to set the pagination.
      */
-    final static String PAGE_PARAM = "page";
+    private final static String PAGE_PARAM = "page";
 
     /**
      * Used to set the type of data that is looked up by this search.
      * This app can only be used to search movies.
      */
-    final static String MOVIE_TYPE = "movie";
-
-    /**
-     * The movie title, used when parsing the response body.
-     */
-    final static String MOVIE_TITLE = "title";
-
-    /**
-     * The production year of the movie, used when parsing the response body.
-     */
-    final static String MOVIE_YEAR = "year";
-
-    /**
-     * The plot overview of the movie, used when parsing the response body.
-     */
-    final static String MOVIE_OVERVIEW = "overview";
-
-    /**
-     * The name of the array that holds all images associated with a movie,
-     * used when parsing the response body.
-     */
-    final static String MOVIE_IMAGE_OVERVIEW = "images";
-
-    /**
-     * The image of the movie, used when parsing the response body.
-     */
-    final static String MOVIE_IMAGE = "poster";
-
-    /**
-     * The size of the movie image, in this case a medium one.
-     */
-    final static String MOVIE_IMAGE_SIZE = "medium";
+    private final static String MOVIE_TYPE = "movie";
 
     /**
      * The character set that is used to encode the search query that was entered by the user.
      */
-    final static String CHAR_SET = "UTF-8";
+    private final static String CHAR_SET = "UTF-8";
+
 
 
     /**
@@ -137,7 +102,7 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
             }
 
             //download
-            String movies = TraktConnector.getMoviesFromTrakt(SEARCH_URL, parameters);
+            String movies = TraktConnector.getMoviesFromTrakt(TaskConstants.SEARCH_URL, parameters);
 
             //--------------------parse---------------------------
 
@@ -165,22 +130,33 @@ public class SearchForMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
                 JSONObject movieObject = metaMovieObject.getJSONObject(MOVIE_TYPE);
 
                 //parse information...
-                String title = movieObject.getString(MOVIE_TITLE);
-                String yearString = movieObject.getString(MOVIE_YEAR);
+                String title = movieObject.getString(TaskConstants.MOVIE_TITLE);
+                String yearString = movieObject.getString(TaskConstants.MOVIE_YEAR);
+                String traktID = "";
 
-                String overview = "";
-                if(movieObject.has(MOVIE_OVERVIEW))
+                if(movieObject.has(TaskConstants.MOVIE_ID_OVERVIEW))
                 {
-                    overview = movieObject.getString(MOVIE_OVERVIEW);
+                    JSONObject idsObject = movieObject.getJSONObject(TaskConstants.MOVIE_ID_OVERVIEW);
+                    if(idsObject.has(TaskConstants.MOVIE_TRAKT_ID))
+                    {
+                        traktID = idsObject.getString(TaskConstants.MOVIE_TRAKT_ID);
+                    }
                 }
 
-                JSONObject imageOverviewArray = movieObject.getJSONObject(MOVIE_IMAGE_OVERVIEW);
-                JSONObject imageObject = imageOverviewArray.getJSONObject(MOVIE_IMAGE);
+                String overview = "";
+                if(movieObject.has(TaskConstants.MOVIE_OVERVIEW))
+                {
+                    overview = movieObject.getString(TaskConstants.MOVIE_OVERVIEW);
+                }
 
-                String imageUrl = imageObject.getString(MOVIE_IMAGE_SIZE);
+                JSONObject imageOverviewArray =
+                                    movieObject.getJSONObject(TaskConstants.MOVIE_IMAGE_OVERVIEW);
+                JSONObject imageObject = imageOverviewArray.getJSONObject(TaskConstants.MOVIE_IMAGE);
+
+                String imageUrl = imageObject.getString(TaskConstants.MOVIE_IMAGE_SIZE);
 
                 //...and add it to the data model
-                Movie movie = new Movie(title);
+                Movie movie = new Movie(traktID, title);
                 movie.setYear(yearString);
                 movie.setOverview(overview);
                 movie.setImageUrl(imageUrl);

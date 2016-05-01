@@ -17,11 +17,18 @@ public interface IMovie
     boolean hasImage();
 
     /**
-     * Indicates whether this movie has production year attached or not.
+     * Indicates whether this movie has a production year attached or not.
      *
      * @return True, if this movie has a production year attached.
      */
     boolean hasYear();
+
+    /**
+     * Indicates whether this movie has a trakt ID attached or not.
+     *
+     * @return True, if this movie has a trakt ID attached.
+     */
+    boolean hasID();
 
     /**
      * Returns the URL to a movie poster that has been attached to this movie in the database.
@@ -51,5 +58,12 @@ public interface IMovie
      * @return The plot overview as a String.
      */
     String getOverview();
+
+    /**
+     * Returns the trakt ID of the movie.
+     *
+     * @return The trakt ID as an integer.
+     */
+    int getID();
 
 }
