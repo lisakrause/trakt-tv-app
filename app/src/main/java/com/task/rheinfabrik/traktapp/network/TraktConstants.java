@@ -1,9 +1,9 @@
 package com.task.rheinfabrik.traktapp.network;
 
 /**
- * Created by lisa on 01.05.2016.
+ * The constants that are used when performing requests to the trakt.tv REST service.
  */
-public class TaskConstants
+public final class TraktConstants
 {
     /**
      * The overview of ids of the movie, used when parsing the response body.

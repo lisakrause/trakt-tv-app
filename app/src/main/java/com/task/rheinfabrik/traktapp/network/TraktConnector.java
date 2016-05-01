@@ -56,7 +56,9 @@ public class TraktConnector
      * or receiving the response.
      */
     public static String getMoviesFromTrakt(String url, HashMap<String, String> parameters)
-                                                                                throws IOException
+                                                                            throws TraktException,
+                                                                                    IOException
+
     {
         //Only if there are parameters set, try to attach them to the URL
         if(parameters != null)
@@ -105,8 +107,7 @@ public class TraktConnector
             if (traktConnection != null) {
                 traktConnection.disconnect();
             }
-            //TODO: throw exception
-            return null;
+            throw new TraktException("Request terminated with " + statusCode);
         }
 
         //----download response body

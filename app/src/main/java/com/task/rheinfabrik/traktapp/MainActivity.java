@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.task.rheinfabrik.traktapp.model.IMovie;
 import com.task.rheinfabrik.traktapp.presenter.MoviesPresenter;
+import com.task.rheinfabrik.traktapp.view.EndlessSearchListAdapter;
 import com.task.rheinfabrik.traktapp.view.MovieListAdapter;
 import com.task.rheinfabrik.traktapp.view.IMoviesView;
 
@@ -38,6 +39,12 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
      * The adapter that is used to populate the list of search results.
      */
     private MovieListAdapter mSearchAdapter;
+
+    /**
+     * The adapter that is used to implement the scrolling in the list of
+     * search results.
+     */
+    private EndlessSearchListAdapter mEndlessAdapter;
 
     /**
      * The view in which the user can enter a search query.
@@ -96,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
         initViews();
 
         //attach data adapter to list
-        this.mSearchResultsList.setAdapter(this.mSearchAdapter);
         this.mPopularMoviesList.setAdapter(this.mPopularAdapter);
 
         //start to retrieve popular movies
@@ -143,9 +149,21 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (!newText.isEmpty()) {
+                if (!newText.isEmpty())
+                {
                     mStatusText.setText(SEARCH_RESULTS);
-                    mMoviesPresenter.searchMovies(mSearchView.getQuery().toString());
+
+                    //clear list and stop former searches by dropping the endless adapter object
+                    mSearchAdapter.clear();
+                    mEndlessAdapter = new EndlessSearchListAdapter(mSearchAdapter, newText);
+                    //setting new adapter to start new search
+                    mSearchResultsList.setAdapter(mEndlessAdapter);
+
+                    //setup view visibilities for search
+                    mErrorView.setVisibility(View.GONE);
+                    mPopularMoviesList.setVisibility(View.GONE);
+                    mSearchResultsList.setVisibility(View.VISIBLE);
+
                 }
 
                 return true;
@@ -175,18 +193,6 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
 
         this.mPopularAdapter.clear();
         this.mPopularAdapter.addAll(moviesList);
-    }
-
-    @Override
-    public void showSearchResults(final List<IMovie> moviesList) {
-
-        this.mLoadSpinner.setVisibility(View.GONE);
-        this.mErrorView.setVisibility(View.GONE);
-        this.mPopularMoviesList.setVisibility(View.GONE);
-        this.mSearchResultsList.setVisibility(View.VISIBLE);
-
-        this.mSearchAdapter.clear();
-        this.mSearchAdapter.addAll(moviesList);
     }
 
     @Override
@@ -220,11 +226,12 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
     @Override
     public void onStart() {
         super.onStart();
+        //TODO
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
+        //TODO
     }
 }

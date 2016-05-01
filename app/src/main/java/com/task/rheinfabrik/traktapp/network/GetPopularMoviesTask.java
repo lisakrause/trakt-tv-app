@@ -8,13 +8,8 @@ import com.task.rheinfabrik.traktapp.model.Movie;
 import com.task.rheinfabrik.traktapp.presenter.MoviesPresenter;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,23 +96,23 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
                 String overview = "";
                 String imageURL = "";
 
-                if(jsonObject.has(TaskConstants.MOVIE_ID_OVERVIEW))
+                if(jsonObject.has(TraktConstants.MOVIE_ID_OVERVIEW))
                 {
-                    JSONObject idsObject = jsonObject.getJSONObject(TaskConstants.MOVIE_ID_OVERVIEW);
-                    if(idsObject.has(TaskConstants.MOVIE_TRAKT_ID))
+                    JSONObject idsObject = jsonObject.getJSONObject(TraktConstants.MOVIE_ID_OVERVIEW);
+                    if(idsObject.has(TraktConstants.MOVIE_TRAKT_ID))
                     {
-                         traktID = idsObject.getString(TaskConstants.MOVIE_TRAKT_ID);
+                         traktID = idsObject.getString(TraktConstants.MOVIE_TRAKT_ID);
                     }
                 }
 
-                if(jsonObject.has(TaskConstants.MOVIE_TITLE))
+                if(jsonObject.has(TraktConstants.MOVIE_TITLE))
                 {
-                    title = jsonObject.getString(TaskConstants.MOVIE_TITLE);
+                    title = jsonObject.getString(TraktConstants.MOVIE_TITLE);
                 }
 
-                if(jsonObject.has(TaskConstants.MOVIE_YEAR))
+                if(jsonObject.has(TraktConstants.MOVIE_YEAR))
                 {
-                    year = jsonObject.getString(TaskConstants.MOVIE_YEAR);
+                    year = jsonObject.getString(TraktConstants.MOVIE_YEAR);
                 }
 
                 //request more information (overview, image) if an ID is given
@@ -131,7 +126,7 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
 
                     //download
                     String movieInformation =
-                            TraktConnector.getMoviesFromTrakt(TaskConstants.SEARCH_URL, parameters);
+                            TraktConnector.getMoviesFromTrakt(TraktConstants.SEARCH_URL, parameters);
 
 
                     //parsing
@@ -147,26 +142,26 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
                             JSONObject infoObject = movieObject.getJSONObject(ACTUAL_MOVIE);
 
                             //get overview
-                            if(infoObject.has(TaskConstants.MOVIE_OVERVIEW))
+                            if(infoObject.has(TraktConstants.MOVIE_OVERVIEW))
                             {
-                                overview = infoObject.getString(TaskConstants.MOVIE_OVERVIEW);
+                                overview = infoObject.getString(TraktConstants.MOVIE_OVERVIEW);
                             }
 
                             //traverse through JSON objects...
-                            if(infoObject.has(TaskConstants.MOVIE_IMAGE_OVERVIEW))
+                            if(infoObject.has(TraktConstants.MOVIE_IMAGE_OVERVIEW))
                             {
                                 JSONObject imageOverviewArray =
-                                        infoObject.getJSONObject(TaskConstants.MOVIE_IMAGE_OVERVIEW);
+                                        infoObject.getJSONObject(TraktConstants.MOVIE_IMAGE_OVERVIEW);
 
-                                if(imageOverviewArray.has(TaskConstants.MOVIE_IMAGE))
+                                if(imageOverviewArray.has(TraktConstants.MOVIE_IMAGE))
                                 {
                                     JSONObject imageObject =
-                                            imageOverviewArray.getJSONObject(TaskConstants.MOVIE_IMAGE);
+                                            imageOverviewArray.getJSONObject(TraktConstants.MOVIE_IMAGE);
 
-                                    if(imageObject.has(TaskConstants.MOVIE_IMAGE_SIZE))
+                                    if(imageObject.has(TraktConstants.MOVIE_IMAGE_SIZE))
                                     {
                                         //...until we find the image URL
-                                        imageURL = imageObject.getString(TaskConstants.MOVIE_IMAGE_SIZE);
+                                        imageURL = imageObject.getString(TraktConstants.MOVIE_IMAGE_SIZE);
                                     }
 
 
@@ -195,10 +190,10 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
 
             return moviesList;
 
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             // URL is invalid
             //TODO
-        } catch (SocketTimeoutException e) {
+        } /*catch (SocketTimeoutException e) {
             // data retrieval or connection timed out
             //TODO
         } catch (IOException e) {
@@ -208,7 +203,9 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
         } catch (JSONException e) {
             // response body is no valid JSON string
             //TODO
-        }
+        }catch(TraktException e){
+            //TODO
+        }*/
 
         //cancel this task in case of failure to be sure that onPostExecute() is not called
         cancel(true);

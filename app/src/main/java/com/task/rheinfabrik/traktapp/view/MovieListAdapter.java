@@ -15,43 +15,50 @@ import com.task.rheinfabrik.traktapp.model.IMovie;
 
 import java.util.List;
 
+/**
+ * Provides an adapter that is used to populate the movie lists (popular, search results).
+ */
 public class MovieListAdapter extends ArrayAdapter<IMovie>
 {
 
+    /**
+     * Constructs a MovieListAdapter.
+     *
+     * @param context The current context.
+     * @param movies The list of movies that shall be shown in the list.
+     */
     public MovieListAdapter(Context context, List<IMovie> movies)
     {
-        super(context, R.layout.found_movie_list_item, movies);
+        super(context, R.layout.movie_list_item, movies);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
+        //---Get the data model to the list item at the current position
         IMovie movie = getItem(position);
 
+        //---Setup view
+        convertView = LayoutInflater.from(parent.getContext()).
+                inflate(R.layout.movie_list_item, parent, false);
 
+        TextView titleView = (TextView) convertView.findViewById(R.id.titleView);
+        TextView yearView = (TextView) convertView.findViewById(R.id.yearView);
 
-            convertView = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.found_movie_list_item, parent, false);
+        EditText overviewView = (EditText) convertView.findViewById(R.id.overviewText);
 
-            TextView titleView = (TextView) convertView.findViewById(R.id.titleView);
-            TextView yearView = (TextView) convertView.findViewById(R.id.yearView);
+        titleView.setText(movie.getTitle());
+        if(movie.hasYear())
+        {
+            yearView.setText("" + movie.getYear());
+        }else
+        {
+            yearView.setText("unknown year");
+        }
 
-            EditText overviewView = (EditText) convertView.findViewById(R.id.overviewText);
+        overviewView.setText(movie.getOverview(), TextView.BufferType.EDITABLE);
 
-            titleView.setText(movie.getTitle());
-            if(movie.hasYear())
-            {
-                yearView.setText("" + movie.getYear());
-            }else
-            {
-                yearView.setText("unknown year");
-            }
-
-            overviewView.setText(movie.getOverview(), TextView.BufferType.EDITABLE);
-
-
-
-
+        //----lazy load image
         ImageView imageView = (ImageView) convertView.findViewById(R.id.movieImage);
 
         if(movie.hasImage())
@@ -68,6 +75,5 @@ public class MovieListAdapter extends ArrayAdapter<IMovie>
         return convertView;
 
     }
-
 
 }

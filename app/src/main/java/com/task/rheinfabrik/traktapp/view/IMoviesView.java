@@ -15,12 +15,6 @@ public interface IMoviesView {
      */
     void showPopularMovies(List<IMovie> moviesList);
 
-    /**
-     * Lets this view show a list of search results containing movies.
-     *
-     * @param moviesList The list of movies that have been found.
-     */
-    void showSearchResults(List<IMovie> moviesList);
 
     /**
      * Lets this view indicate a loading of data to the user.
