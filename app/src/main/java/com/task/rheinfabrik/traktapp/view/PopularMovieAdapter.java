@@ -9,17 +9,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.task.rheinfabrik.traktapp.R;
-import com.task.rheinfabrik.traktapp.model.Movie;
+import com.task.rheinfabrik.traktapp.model.IMovie;
 
 import java.util.List;
 
-/**
- * Created by lisa on 28.04.2016.
- */
-public class PopularMovieAdapter extends ArrayAdapter<Movie>
+//TODO: Remove class?
+public class PopularMovieAdapter extends ArrayAdapter<IMovie>
 {
 
-    public PopularMovieAdapter(Context context, List<Movie> movies)
+    public PopularMovieAdapter(Context context, List<IMovie> movies)
     {
         super(context, R.layout.popular_movie_list_item, movies);
     }
@@ -27,7 +25,7 @@ public class PopularMovieAdapter extends ArrayAdapter<Movie>
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        Movie movie = getItem(position);
+        IMovie movie = getItem(position);
         View listItem = convertView;
 
         if(listItem == null)
