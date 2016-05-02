@@ -59,6 +59,11 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
      */
     private Toolbar mToolbar;
 
+    /**
+     * The menu of this activity.
+     */
+    private Menu mMenu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,19 +78,21 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
         this.mMoviesPresenter = new MoviesPresenter(this);
         this.mMoviesPresenter.attachView(this);
 
-        this.mPopularAdapter = new MovieListAdapter(this, new ArrayList<IMovie>());
 
         //---init views
         initViews();
 
+        //(would be great if we could prevent loading the list again every time
+        //we turn the screen, unfortunately that did not work well)
+
+        this.mPopularAdapter = new MovieListAdapter(this, new ArrayList<IMovie>());
+
         //attach data adapter to list
         this.mPopularMoviesList.setAdapter(this.mPopularAdapter);
 
-        if(savedInstanceState == null)
-        {
-            //start to retrieve popular movies
-            this.mMoviesPresenter.getPopularMovies();
-        }
+        //start to retrieve popular movies
+        this.mMoviesPresenter.getPopularMovies();
+
     }
 
 
@@ -97,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
 
         this.mPopularAdapter.clear();
         this.mPopularAdapter.addAll(moviesList);
+
     }
 
     @Override
@@ -104,6 +112,13 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
     {
         this.mLoadSpinner.setVisibility(View.VISIBLE);
         this.mErrorLayout.setVisibility(View.GONE);
+
+        //since this method is only called, when there is a network connection,
+        //enable search action
+        if(this.mMenu != null)
+        {
+            this.mMenu.findItem(R.id.action_search).setEnabled(true);
+        }
     }
 
 
@@ -113,23 +128,14 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
         this.mLoadSpinner.setVisibility(View.GONE);
 
         this.mPopularMoviesList.setVisibility(View.GONE);
-    }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        //TODO
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        //TODO
+        //disable search action since we do not have a network connection
+        this.mMenu.findItem(R.id.action_search).setEnabled(false);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.mMenu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main_toolbar, menu);
         return true;
@@ -140,8 +146,10 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
+            //When the user hit the search button,...
             case R.id.action_search:
 
+                //...show the corresponding activity
                 Intent intent = new Intent(this, SearchActivity.class);
                 startActivity(intent);
                 return true;

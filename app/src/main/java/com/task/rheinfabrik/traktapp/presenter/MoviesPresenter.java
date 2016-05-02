@@ -26,29 +26,14 @@ public class MoviesPresenter implements IPresenter<IMoviesView>
      */
     private Context mContext;
 
+    /**
+     * Constructs a MoviesPresenter.
+     *
+     * @param context The context of this app.
+     */
     public MoviesPresenter(Context context)
     {
         this.mContext = context;
-    }
-
-    @Override
-    public void onCreate() {
-        //TODO
-    }
-
-    @Override
-    public void onStart() {
-        //TODO
-    }
-
-    @Override
-    public void onStop() {
-        //TODO
-    }
-
-    @Override
-    public void onPause() {
-        //TODO
     }
 
     @Override
@@ -80,8 +65,6 @@ public class MoviesPresenter implements IPresenter<IMoviesView>
             //show to the user that there is no network connection
             this.mMoviesView.showError();
         }
-
-
 
     }
 

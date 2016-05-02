@@ -9,7 +9,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -48,12 +47,6 @@ public class SearchActivity extends AppCompatActivity {
     private ListView mSearchResultsList;
 
     /**
-     * The view that indicates that there has been an error while downloading movies
-     * (usually a connection error).
-     */
-    private ImageView mErrorView;
-
-    /**
      * This view is shown when there are no results found.
      */
     private TextView mNoResultView;
@@ -76,10 +69,12 @@ public class SearchActivity extends AppCompatActivity {
 
         this.mSearchResultsList = (ListView) findViewById(R.id.searchResultsList);
 
-        this.mErrorView = (ImageView) findViewById(R.id.errorView);
         this.mNoResultView = (TextView) findViewById(R.id.noResultsView);
 
         this.setupSearchView();
+
+        //TODO: would be great if the activity could retain the current results list and
+        // remember the scroll position when the user turns the screen
 
     }
 
@@ -109,11 +104,10 @@ public class SearchActivity extends AppCompatActivity {
                     //setting new adapter to start new search
                     mSearchResultsList.setAdapter(mEndlessAdapter);
 
-                    //setup view visibilities for search
-                    mErrorView.setVisibility(View.GONE);
                     //needs to be done since otherwise endless adapter will not start
                     //to populate the list initially
                     mSearchResultsList.setVisibility(View.VISIBLE);
+
                     mNoResultView.setVisibility(View.GONE);
 
                 }else

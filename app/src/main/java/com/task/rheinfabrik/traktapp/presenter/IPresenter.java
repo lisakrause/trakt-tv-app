@@ -10,12 +10,6 @@ import com.task.rheinfabrik.traktapp.view.IMoviesView;
  */
 public interface IPresenter<T extends IMoviesView> {
 
-    //TODO: fill methods or remove
-    void onCreate();
-    void onStart();
-    void onStop();
-    void onPause();
-
     /**
      * Attach the view to this Presenter.
      *

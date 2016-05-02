@@ -55,6 +55,10 @@ public class SearchForMoviesRequester
      */
     public static List<IMovie> getSearchResults(String searchQuery, int page)
     {
+        //(found out later that there might be a possibility to use Jackson and
+        //Spring to do the HTTP connection and the JSON parsing but since it works
+        //currently, I left the code like this)
+
         try
         {
             //-------------------download------------------------
@@ -125,11 +129,10 @@ public class SearchForMoviesRequester
             return moviesList;
 
         } catch (Exception e) {
-            // URL is invalid
-            //TODO
+            //do nothing, since everything is handled in the code below
         }
 
-        //TODO
+        //TODO: show the user some information when something went wrong while fetching the movies
         return null;
     }
 }

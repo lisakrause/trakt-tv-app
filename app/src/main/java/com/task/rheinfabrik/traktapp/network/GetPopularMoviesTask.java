@@ -65,6 +65,12 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
     @Override
     protected List<IMovie> doInBackground(Void...params)
     {
+        //(found out later that there might be a possibility to use Jackson and
+        //Spring to do the HTTP connection and the JSON parsing but since it works
+        //currently, I left the code like this)
+
+        //TODO: show the user some information when something went wrong while fetching the movies
+
         try {
 
             //--------------------download-----------------
@@ -76,6 +82,7 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
 
 
             //--------------------parse--------------------
+
 
             //Get the array of movies from the response body
             JSONArray jsonArray = new JSONArray(movies);
@@ -191,21 +198,8 @@ public class GetPopularMoviesTask extends AsyncTask<Void, Void, List<IMovie>>
             return moviesList;
 
         } catch (Exception e) {
-            // URL is invalid
-            //TODO
-        } /*catch (SocketTimeoutException e) {
-            // data retrieval or connection timed out
-            //TODO
-        } catch (IOException e) {
-            // could not read response body
-            // (could not create input stream)
-            //TODO
-        } catch (JSONException e) {
-            // response body is no valid JSON string
-            //TODO
-        }catch(TraktException e){
-            //TODO
-        }*/
+            //do nothing, since everything is handled in the code below
+        }
 
         //cancel this task in case of failure to be sure that onPostExecute() is not called
         cancel(true);
