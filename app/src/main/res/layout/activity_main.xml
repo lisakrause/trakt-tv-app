@@ -7,54 +7,75 @@
 	android:layout_alignParentTop="true"
 	android:layout_alignParentStart="true"
 	android:background="@color/colorPrimary">
+	
+	<android.support.v7.widget.Toolbar
+   android:id="@+id/toolbar"
+   android:layout_width="match_parent"
+   android:layout_height="?attr/actionBarSize"
+   android:background="@color/colorPrimary"
+   android:elevation="4dp"
+   android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
-	<SearchView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/searchView"
-		android:layout_gravity="right"
-		android:queryHint="Find movies..." />
 
 	<TextView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Popular Movies"
-		android:id="@+id/statusText"
+		android:id="@+id/titleText"
 		android:layout_gravity="center|left"
 		android:textColor="@android:color/white"
-		android:textSize="20sp" />
+		android:textSize="20sp"
+		android:text="@string/string_popular_list" />
 
-	<ImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/errorView"
-		android:layout_gravity="center_horizontal" />
 
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal">
 
-		<ListView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/searchResultsList"
-            android:background="@color/colorPrimary"
-            android:visibility="gone"
-            android:layout_gravity="center|top" />
 
 		<ListView
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:id="@+id/popularMoviesList"
-			android:layout_gravity="center" />
+			android:layout_gravity="center"
+			android:visibility="gone" />
 
 		<ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/loadIndicator"
             style="@android:style/Widget.Holo.ProgressBar.Small"
-            android:layout_gravity="center|bottom" />
+            android:layout_gravity="center|bottom"
+			android:visibility="gone" />
+
+
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="center|bottom"
+			android:measureWithLargestChild="true"
+			android:id="@+id/errorLayout"
+			android:visibility="gone">
+
+			<ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/errorView"
+                android:layout_gravity="center_horizontal"
+                android:visibility="visible"
+				android:src="@drawable/connection" />
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/string_no_connection"
+				android:id="@+id/textView"
+				android:layout_gravity="center|bottom"
+				android:textAlignment="center"
+				android:textColor="@android:color/white" />
+		</LinearLayout>
+
 	</FrameLayout>
 
 </LinearLayout>

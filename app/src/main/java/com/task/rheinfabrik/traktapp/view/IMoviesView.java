@@ -13,7 +13,7 @@ public interface IMoviesView {
      * Lets this view show a list of popular movies.
      * @param moviesList The list that contains the popular movies.
      */
-    void showPopularMovies(List<IMovie> moviesList);
+    void addPopularMovies(List<IMovie> moviesList);
 
 
     /**

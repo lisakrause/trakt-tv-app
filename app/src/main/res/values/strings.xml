@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">trakt.tv</string>
+    <string name="string_search">Search</string>
+    <string name="string_popular_list">10 Most Popular Movies</string>
+    <string name="string_no_results">No results found</string>
+    <string name="string_no_connection">No network connection\nTap to retry</string>
 </resources>

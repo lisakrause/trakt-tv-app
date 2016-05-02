@@ -1,19 +1,22 @@
 package com.task.rheinfabrik.traktapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.task.rheinfabrik.traktapp.model.IMovie;
 import com.task.rheinfabrik.traktapp.presenter.MoviesPresenter;
-import com.task.rheinfabrik.traktapp.view.EndlessSearchListAdapter;
 import com.task.rheinfabrik.traktapp.view.MovieListAdapter;
 import com.task.rheinfabrik.traktapp.view.IMoviesView;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,35 +39,10 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
     private MovieListAdapter mPopularAdapter;
 
     /**
-     * The adapter that is used to populate the list of search results.
-     */
-    private MovieListAdapter mSearchAdapter;
-
-    /**
-     * The adapter that is used to implement the scrolling in the list of
-     * search results.
-     */
-    private EndlessSearchListAdapter mEndlessAdapter;
-
-    /**
-     * The view in which the user can enter a search query.
-     */
-    private SearchView mSearchView;
-    /**
-     * The view that indicates which kind of movie list is shown currently.
-     */
-    private TextView mStatusText;
-
-    /**
      * The view that indicates that there has been an error while downloading movies
      * (usually a connection error).
      */
-    private ImageView mErrorView;
-
-    /**
-     * The list that shows the results of the search query that has been entered by the user.
-     */
-    private ListView mSearchResultsList;
+    private LinearLayout mErrorLayout;
 
     /**
      * The list that shows the 10 most popular movies.
@@ -77,14 +55,9 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
     private ProgressBar mLoadSpinner;
 
     /**
-     * The text for the status view when popular movies are shown.
+     * The toolbar of this activity.
      */
-    private final static String POPULAR_MOVIES = "Popular Movies";
-
-    /**
-     * The text for the status view when search results are shown.
-     */
-    private final static String SEARCH_RESULTS = "Search Results";
+    private Toolbar mToolbar;
 
 
     @Override
@@ -92,12 +65,15 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(this.mToolbar);
+
+
         //---init presenter
-        this.mMoviesPresenter = new MoviesPresenter();
+        this.mMoviesPresenter = new MoviesPresenter(this);
         this.mMoviesPresenter.attachView(this);
 
         this.mPopularAdapter = new MovieListAdapter(this, new ArrayList<IMovie>());
-        this.mSearchAdapter = new MovieListAdapter(this, new ArrayList<IMovie>());
 
         //---init views
         initViews();
@@ -105,90 +81,18 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
         //attach data adapter to list
         this.mPopularMoviesList.setAdapter(this.mPopularAdapter);
 
-        //start to retrieve popular movies
-        this.mStatusText.setText(POPULAR_MOVIES);
-        this.mMoviesPresenter.getPopularMovies();
-    }
-
-    /**
-     * Initializes all views of this app including initial visibility.
-     */
-    private void initViews() {
-
-        this.mPopularMoviesList = (ListView) findViewById(R.id.popularMoviesList);
-        this.mPopularMoviesList.setVisibility(View.GONE);
-
-        this.mSearchResultsList = (ListView) findViewById(R.id.searchResultsList);
-        this.mSearchResultsList.setVisibility(View.GONE);
-
-        this.mLoadSpinner = (ProgressBar) findViewById(R.id.loadIndicator);
-        this.mLoadSpinner.setVisibility(View.GONE);
-
-        this.mErrorView = (ImageView) findViewById(R.id.errorView);
-        this.mErrorView.setVisibility(View.GONE);
-        this.mStatusText = (TextView) findViewById(R.id.statusText);
-
-        this.setupSearchView();
-    }
-
-
-    /**
-     * Initializes the search view including setting up listener to react to entries or closing
-     * the search.
-     */
-    private void setupSearchView() {
-        //init
-        this.mSearchView = (SearchView) findViewById(R.id.searchView);
-
-        //attach listener to start search as soon as user starts to enter a query
-        this.mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (!newText.isEmpty())
-                {
-                    mStatusText.setText(SEARCH_RESULTS);
-
-                    //clear list and stop former searches by dropping the endless adapter object
-                    mSearchAdapter.clear();
-                    mEndlessAdapter = new EndlessSearchListAdapter(mSearchAdapter, newText);
-                    //setting new adapter to start new search
-                    mSearchResultsList.setAdapter(mEndlessAdapter);
-
-                    //setup view visibilities for search
-                    mErrorView.setVisibility(View.GONE);
-                    mPopularMoviesList.setVisibility(View.GONE);
-                    mSearchResultsList.setVisibility(View.VISIBLE);
-
-                }
-
-                return true;
-            }
-        });
-
-        //attach listener to show popular movies when user leaves the search view
-        this.mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                mStatusText.setText(POPULAR_MOVIES);
-                showPopularMovies();
-
-                return false;
-            }
-        });
+        if(savedInstanceState == null)
+        {
+            //start to retrieve popular movies
+            this.mMoviesPresenter.getPopularMovies();
+        }
     }
 
 
     @Override
-    public void showPopularMovies(final List<IMovie> moviesList) {
-
+    public void addPopularMovies(final List<IMovie> moviesList)
+    {
         this.mLoadSpinner.setVisibility(View.GONE);
-        this.mErrorView.setVisibility(View.GONE);
-        this.mSearchResultsList.setVisibility(View.GONE);
         this.mPopularMoviesList.setVisibility(View.VISIBLE);
 
         this.mPopularAdapter.clear();
@@ -196,32 +100,21 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
     }
 
     @Override
-    public void showLoading() {
+    public void showLoading()
+    {
         this.mLoadSpinner.setVisibility(View.VISIBLE);
-        this.mErrorView.setVisibility(View.GONE);
-
-        this.mPopularMoviesList.setVisibility(View.GONE);
-        this.mSearchResultsList.setVisibility(View.GONE);
-
-
+        this.mErrorLayout.setVisibility(View.GONE);
     }
 
 
     @Override
     public void showError() {
-        this.mErrorView.setVisibility(View.VISIBLE);
+        this.mErrorLayout.setVisibility(View.VISIBLE);
         this.mLoadSpinner.setVisibility(View.GONE);
 
-        this.mSearchResultsList.setVisibility(View.GONE);
         this.mPopularMoviesList.setVisibility(View.GONE);
     }
 
-    private void showPopularMovies() {
-        this.mLoadSpinner.setVisibility(View.GONE);
-        this.mErrorView.setVisibility(View.GONE);
-        this.mSearchResultsList.setVisibility(View.GONE);
-        this.mPopularMoviesList.setVisibility(View.VISIBLE);
-    }
 
     @Override
     public void onStart() {
@@ -234,4 +127,51 @@ public class MainActivity extends AppCompatActivity implements IMoviesView {
         super.onStop();
         //TODO
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main_toolbar, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_search:
+
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                return true;
+
+
+            default:
+                //action was not recognized
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+
+    /**
+     * Initializes all views of this app.
+     */
+    private void initViews()
+    {
+        this.mPopularMoviesList = (ListView) findViewById(R.id.popularMoviesList);
+
+        this.mLoadSpinner = (ProgressBar) findViewById(R.id.loadIndicator);
+        this.mErrorLayout = (LinearLayout) findViewById(R.id.errorLayout);
+
+        this.mErrorLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMoviesPresenter.getPopularMovies();
+            }
+        });
+
+    }
+
 }

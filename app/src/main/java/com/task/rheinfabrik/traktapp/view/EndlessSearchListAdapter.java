@@ -47,7 +47,7 @@ public class EndlessSearchListAdapter extends EndlessAdapter
      */
     public EndlessSearchListAdapter(MovieListAdapter listAdapter, String searchQuery)
     {
-        super(listAdapter);
+        super(listAdapter, true);
 
         this.mSearchQuery = searchQuery;
     }
@@ -119,4 +119,5 @@ public class EndlessSearchListAdapter extends EndlessAdapter
 
         return new ProgressBar(parent.getContext());
     }
+
 }
